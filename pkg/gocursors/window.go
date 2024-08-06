@@ -5,21 +5,19 @@ import (
 	"os"
 
 	"github.com/detectivekaktus/gocursors/internal/terminal"
+	"golang.org/x/term"
 )
 
 type Window struct {
-  CurX          int
-  CurY          int
-  Width         int
-  Height        int
-
-  KeyPadEnabled bool
-  EchoEnabled   bool
+  CurX   int
+  CurY   int
+  Width  int
+  Height int
 }
 
 func GoCursors() *Window {
   if !terminal.IsTerminal() {
-    fmt.Println("FATAL ERROR: Cannot invoke GoCursors in non terminal context.")
+    fmt.Println("FATAL ERROR: Can't invoke GoCursors in non terminal context.")
     os.Exit(1)
   }
   width, height, err := terminal.GetTerminalSize()
@@ -33,8 +31,6 @@ func GoCursors() *Window {
     CurY: 0,
     Width: width,
     Height: height,
-    KeyPadEnabled: false,
-    EchoEnabled: false,
   }
 }
 
@@ -48,15 +44,17 @@ func InitWindow(width, height int) *Window {
     CurY: 0,
     Width: width,
     Height: height,
-    KeyPadEnabled: false,
-    EchoEnabled: false,
   }
 }
 
-func (w *Window) EnableKeyPad(b bool) {
-  w.KeyPadEnabled = b
+func (w *Window) GetChar() byte {
+  return terminal.ReadByte()
 }
 
-func (w *Window) EnableEcho(b bool) {
-  w.EchoEnabled = b
+func CbreakStart() *term.State {
+  return terminal.MakeRaw()
+}
+
+func CbreakRestore(oldState *term.State) {
+  terminal.ApplyState(oldState)
 }
