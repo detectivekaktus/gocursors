@@ -36,6 +36,11 @@ func GoCursors() *Window {
   return w
 }
 
+func EndCursors(root *Window) {
+  EraseEntireScreen()
+  root.Home()
+}
+
 func EraseEntireScreen() {
   fmt.Print("\033[2J")
 }
@@ -109,7 +114,8 @@ func (w *Window) CurAddY(y int) {
 
 func (w *Window) OutChar(b byte) {
   if w.CurX + 1 > w.Width {
-    return
+    w.CurX = 0
+    w.CurY++
   }
   fmt.Printf("%c", b)
   w.CurX++
