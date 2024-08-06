@@ -107,6 +107,20 @@ func (w *Window) CurAddY(y int) {
   fmt.Printf("\033[%d;%dH", w.CurY, w.CurX)
 }
 
+func (w *Window) OutChar(b byte) {
+  if w.CurX + 1 > w.Width {
+    return
+  }
+  fmt.Printf("%c", b)
+  w.CurX++
+}
+
+func (w *Window) OutString(s string) {
+  fmt.Printf("%s", s)
+  w.CurY += len(s) / w.Width
+  w.CurX += len(s) - ((len(s) / w.Width) * w.Width)
+}
+
 func CbreakStart() *term.State {
   return terminal.MakeRaw()
 }
