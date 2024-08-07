@@ -121,6 +121,10 @@ func (w *Window) OutString(s string) {
   }
 }
 
+func (w *Window) OutFormat(s string, args ...any) {
+  w.OutString(fmt.Sprintf(s, args...))
+}
+
 func CbreakStart() *term.State {
   return terminal.MakeRaw()
 }
