@@ -27,8 +27,8 @@ func GoCursors() *Window {
   }
   EraseEntireScreen()
   w := &Window{
-    CurX: 0,
-    CurY: 0,
+    CurX: 1,
+    CurY: 1,
     Width: width,
     Height: height,
   }
@@ -59,7 +59,7 @@ func (w *Window) GetChar() byte {
 }
 
 func (w *Window) Home() {
-  w.Move(0, 0)
+  w.Move(1, 1)
 }
 
 func (w *Window) Move(x, y int) {
