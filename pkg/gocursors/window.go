@@ -9,10 +9,10 @@ import (
 )
 
 type Window struct {
-  CurX   int
-  CurY   int
-  Width  int
-  Height int
+  CurX    int
+  CurY    int
+  Columns int
+  Rows    int
 }
 
 func GoCursors() *Window {
@@ -26,12 +26,7 @@ func GoCursors() *Window {
     os.Exit(1)
   }
   EraseEntireScreen()
-  w := &Window{
-    CurX: 1,
-    CurY: 1,
-    Width: width,
-    Height: height,
-  }
+  w := InitWindow(width, height)
   w.Home()
   return w
 }
@@ -47,10 +42,10 @@ func EraseEntireScreen() {
 
 func InitWindow(width, height int) *Window {
   return &Window{
-    CurX: 0,
-    CurY: 0,
-    Width: width,
-    Height: height,
+    CurX: 1,
+    CurY: 1,
+    Columns: width + 1,
+    Rows: height + 1,
   }
 }
 
@@ -63,7 +58,7 @@ func (w *Window) Home() {
 }
 
 func (w *Window) Move(x, y int) {
-  if x > w.Width || y > w.Height || x < 0 || y < 0 {
+  if x > w.Columns || y > w.Rows || x < 0 || y < 0 {
     return
   }
   w.CurX = x
@@ -72,23 +67,21 @@ func (w *Window) Move(x, y int) {
 }
 
 func (w *Window) MoveX(x int) {
-  if x > w.Width || x < 0 {
+  if x > w.Columns || x < 0 {
     return
   }
-  w.CurX = x
-  fmt.Printf("\033[%d;%dH", w.CurY, w.CurX)
+  w.Move(x, w.CurY)
 }
 
 func (w *Window) MoveY(y int) {
-  if y > w.Height || y < 0 {
+  if y > w.Rows || y < 0 {
     return
   }
-  w.CurY = y
-  fmt.Printf("\033[%d;%dH", w.CurY, w.CurX)
+  w.Move(w.CurX, y)
 }
 
 func (w *Window) CurAdd(x, y int) {
-  if (w.CurX + x > w.Width || w.CurX + x < 0) || (w.CurY + y > w.Height || w.CurY + y < 0) {
+  if (w.CurX + x > w.Columns || w.CurX + x < 0) || (w.CurY + y > w.Rows || w.CurY + y < 0) {
     return
   }
   w.CurX += x
@@ -97,34 +90,35 @@ func (w *Window) CurAdd(x, y int) {
 }
 
 func (w *Window) CurAddX(x int) {
-  if w.CurX + x > w.Width || w.CurX + x < 0 {
+  if w.CurX + x > w.Columns || w.CurX + x < 0 {
     return
   }
-  w.CurX += x
-  fmt.Printf("\033[%d;%dH", w.CurY, w.CurX)
+  w.CurAdd(x, 0)
 }
 
 func (w *Window) CurAddY(y int) {
-  if w.CurY + y > w.Height || w.CurY + y < 0 {
+  if w.CurY + y > w.Rows || w.CurY + y < 0 {
     return
   }
-  w.CurY += y
-  fmt.Printf("\033[%d;%dH", w.CurY, w.CurX)
+  w.CurAdd(0, y)
 }
 
 func (w *Window) OutChar(b byte) {
-  if w.CurX + 1 > w.Width {
-    w.CurX = 0
-    w.CurY++
+  if w.CurX + 1 > w.Columns {
+    w.CurAdd(-w.CurX + 1, 1)
   }
   fmt.Printf("%c", b)
   w.CurX++
 }
 
 func (w *Window) OutString(s string) {
-  fmt.Printf("%s", s)
-  w.CurY += len(s) / w.Width
-  w.CurX += len(s) - ((len(s) / w.Width) * w.Width)
+  for i := 0; i < len(s); i++ {
+    if s[i] == '\n' {
+      w.CurAdd(-w.CurX + 1, 1)
+    } else {
+      w.OutChar(s[i])
+    }
+  }
 }
 
 func CbreakStart() *term.State {
