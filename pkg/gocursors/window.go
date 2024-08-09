@@ -286,7 +286,8 @@ func (w *Window) OutFormat(s string, args ...any) {
 
 /*
   Creates a standard border around the window and moves the cursor
-  to the coordinates 2, 2.
+  to the coordinates 2, 2. Drawing a border erases all the characters
+  that were previously present on the screen.
   If you want to create a custom border, consider using CustomBorder.
 */
 func (w *Window) Border() {
@@ -295,7 +296,9 @@ func (w *Window) Border() {
 
 /*
   Creates a custom border around the window and moves the cursor to
-  the coordinates 2, 2.
+  the coordinates 2, 2. Drawing a border erases all the characters
+  that were previously present on the screen.
+
 */
 func (w *Window) CustomBorder(topLeft, topRight, bottomLeft, bottomRight, horizontal, vertical rune) {
   for y := 0; y < w.Rows; y++ {
