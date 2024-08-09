@@ -1,3 +1,11 @@
+/*
+  Package that enables ncurses-like screen manipulations.
+
+  The library is based on the ANSI escape codes and to perform
+  the most basic operations ncurses library has. Note that the
+  library is not an ncurses wrapper or binding, it's just
+  inspired by it.
+*/
 package gocursors
 
 import (
@@ -148,7 +156,7 @@ func InitWindow(parent *Window, columns, rows, startX, startY int) *Window {
 /*
   Reads an ASCII character from the user and returns it back.
 */
-func (w *Window) GetChar() byte {
+func (w *Window) GetChar() rune {
   return terminal.ReadByte()
 }
 
@@ -240,6 +248,9 @@ func (w *Window) CurAddY(y int) {
   is printed.
 */
 func (w *Window) OutChar(r rune) {
+  if w.CurX == w.StartX + w.Columns && w.CurY == w.StartY + w.Rows {
+    return
+  }
   if w.CurX + 1 > w.StartX + w.Columns {
     w.CurAdd(-w.Columns, 1)
   }
@@ -314,7 +325,7 @@ func (w *Window) CustomBorder(topLeft, topRight, bottomLeft, bottomRight, horizo
   
   If you use this function, you must end the program with CbreakRestore
   function call, otherwise you may get unexpected behaviour in your terminal
-  after your program finished the exectuion.
+  after your program has finished the exectuion.
 */
 func CbreakStart() {
   state = terminal.MakeRaw()
