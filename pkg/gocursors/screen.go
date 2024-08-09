@@ -6,8 +6,16 @@ import (
 	"github.com/detectivekaktus/gocursors/internal/terminal"
 )
 
+/*
+  A function that handles the resize logic must
+  the following signature.
+*/
 type ResizeFunc func(*Window)
 
+/*
+  Updates the root window and calls to the ResizeFunc to
+  handle the terminal size changes.
+*/
 func Resize(root *Window, f ResizeFunc) {
   columns, rows, err := terminal.GetTerminalSize()
   if err != nil {
