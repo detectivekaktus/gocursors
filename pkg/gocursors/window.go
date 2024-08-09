@@ -167,11 +167,11 @@ func (w *Window) CurAddY(y int) {
   w.CurAdd(0, y)
 }
 
-func (w *Window) OutChar(b byte) {
+func (w *Window) OutChar(r rune) {
   if w.CurX + 1 > w.StartX + w.Columns {
     w.CurAdd(-w.Columns, 1)
   }
-  fmt.Printf("%c", b)
+  fmt.Printf("%c", r)
   w.CurX++
 }
 
@@ -181,7 +181,7 @@ func (w *Window) OutString(s string) {
     if s[i] == '\n' {
       w.CurAdd(-w.CurX + 1, 1)
     } else {
-      w.OutChar(s[i])
+      w.OutChar(rune(s[i]))
     }
   }
 }
@@ -189,6 +189,28 @@ func (w *Window) OutString(s string) {
 func (w *Window) OutFormat(s string, args ...any) {
   w.Cursor()
   w.OutString(fmt.Sprintf(s, args...))
+}
+
+func (w *Window) Border() {
+  for y := 0; y < w.Rows; y++ {
+    for x := 0; x < w.Columns; x++ {
+      w.Move(w.StartX + x, w.StartY + y)
+      if x == 0 && y == 0 {
+        w.OutChar('┏')
+      } else if x == w.Columns - 1 && y == 0 {
+        w.OutChar('┓')
+      } else if x == 0 && y == w.Rows - 1 {
+        w.OutChar('┗')
+      } else if x == w.Columns - 1 && y == w.Rows - 1 {
+        w.OutChar('┛')
+      } else if y == 0 || y == w.Rows - 1 {
+        w.OutChar('━')
+      } else if x == 0 || x == w.Columns - 1 {
+        w.OutChar('┃')
+      }
+    }
+  }
+  w.Move(w.StartX + 1, w.StartY + 1)
 }
 
 func CbreakStart() {
