@@ -192,21 +192,25 @@ func (w *Window) OutFormat(s string, args ...any) {
 }
 
 func (w *Window) Border() {
+  w.CustomBorder('┏', '┓', '┗', '┛', '━', '┃')
+}
+
+func (w *Window) CustomBorder(topLeft, topRight, bottomLeft, bottomRight, horizontal, vertical rune) {
   for y := 0; y < w.Rows; y++ {
     for x := 0; x < w.Columns; x++ {
       w.Move(w.StartX + x, w.StartY + y)
       if x == 0 && y == 0 {
-        w.OutChar('┏')
+        w.OutChar(topLeft)
       } else if x == w.Columns - 1 && y == 0 {
-        w.OutChar('┓')
+        w.OutChar(topRight)
       } else if x == 0 && y == w.Rows - 1 {
-        w.OutChar('┗')
+        w.OutChar(bottomLeft)
       } else if x == w.Columns - 1 && y == w.Rows - 1 {
-        w.OutChar('┛')
+        w.OutChar(bottomRight)
       } else if y == 0 || y == w.Rows - 1 {
-        w.OutChar('━')
+        w.OutChar(horizontal)
       } else if x == 0 || x == w.Columns - 1 {
-        w.OutChar('┃')
+        w.OutChar(vertical)
       }
     }
   }
