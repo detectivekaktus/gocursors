@@ -84,7 +84,7 @@ func InitWindow(parent *Window, columns, rows, startX, startY int) *Window {
       CurY: 1,
     }
     parent.Children = append(parent.Children, w)
-    w.Cursor()
+    w.Home()
     return w
   }
   root = &Window{
@@ -100,7 +100,7 @@ func InitWindow(parent *Window, columns, rows, startX, startY int) *Window {
     CurX: 1,
     CurY: 1,
   }
-  root.Cursor()
+  root.Home()
   return root
 }
 
@@ -172,7 +172,6 @@ func (w *Window) OutChar(r rune) {
 }
 
 func (w *Window) OutString(s string) {
-  w.Cursor()
   for i := 0; i < len(s); i++ {
     if s[i] == '\n' {
       w.CurAdd(-w.CurX + 1, 1)
