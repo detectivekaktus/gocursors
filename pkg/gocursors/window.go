@@ -1,11 +1,12 @@
 package gocursors
 
 import (
-  "fmt"
-  "os"
+	"fmt"
+	"os"
 
-  "github.com/detectivekaktus/gocursors/internal/terminal"
-  "golang.org/x/term"
+	"github.com/detectivekaktus/gocursors/internal/ansi"
+	"github.com/detectivekaktus/gocursors/internal/terminal"
+	"golang.org/x/term"
 )
 
 var root *Window
@@ -18,7 +19,7 @@ func GoCrash(msg string, args ...any) {
   if root != nil {
     root.Home()
   }
-  EraseEntireScreen()
+  ansi.EraseEntireScreen()
   fmt.Printf(msg, args...)
   os.Exit(1)
 }
@@ -45,19 +46,15 @@ func GoCursors() *Window {
   if err != nil {
     GoCrash("FATAL ERROR: Root window initialization failed.\n")
   }
-  EraseEntireScreen()
+  ansi.EraseEntireScreen()
   w := InitWindow(nil, columns, rows, 1, 1)
   w.Home()
   return w
 }
 
 func EndCursors(root *Window) {
-  EraseEntireScreen()
+  ansi.EraseEntireScreen()
   root.Home()
-}
-
-func EraseEntireScreen() {
-  fmt.Print("\033[2J")
 }
 
 func InitWindow(parent *Window, columns, rows, startX, startY int) *Window {
@@ -126,7 +123,7 @@ func (w *Window) Move(x, y int) {
   }
   w.CurX = x
   w.CurY = y
-  fmt.Printf("\033[%d;%dH", w.CurY, w.CurX)
+  ansi.MoveCursor(w.CurY, w.CurX)
 }
 
 func (w *Window) MoveX(x int) {
@@ -150,7 +147,7 @@ func (w *Window) CurAdd(x, y int) {
   }
   w.CurX += x
   w.CurY += y
-  fmt.Printf("\033[%d;%dH", w.CurY, w.CurX)
+  ansi.MoveCursor(w.CurY, w.CurX)
 }
 
 func (w *Window) CurAddX(x int) {
