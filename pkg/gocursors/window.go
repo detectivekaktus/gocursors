@@ -68,8 +68,6 @@ func InitWindow(parent *Window, columns, rows, startX, startY int) *Window {
   } else {
     if startX <= 0 || startY <= 0 {
       GoCrash("ERROR: Start coordinates begin from 1, 1.\n")
-    } else if startX > parent.Columns + columns || startY > parent.Rows + rows {
-      GoCrash("ERROR: Start coordinates must be within the window.\n")
     }
     if columns <= 0 || rows <= 0 {
       GoCrash("ERROR: Window size cannot be equal or smaller than 0.\n")
@@ -90,8 +88,10 @@ func InitWindow(parent *Window, columns, rows, startX, startY int) *Window {
       CurY: 1,
     }
     parent.Children = append(parent.Children, w)
+    w.Cursor()
+    return w
   }
-  w := &Window{
+  root = &Window{
     Parent: parent,
     Children: make([]*Window, 0),
 
@@ -104,8 +104,8 @@ func InitWindow(parent *Window, columns, rows, startX, startY int) *Window {
     CurX: 1,
     CurY: 1,
   }
-  root = w
-  return w
+  root.Cursor()
+  return root
 }
 
 func (w *Window) GetChar() byte {
@@ -117,11 +117,11 @@ func (w *Window) Cursor() {
 }
 
 func (w *Window) Home() {
-  w.Move(1, 1)
+  w.Move(w.StartX, w.StartY)
 }
 
 func (w *Window) Move(x, y int) {
-  if x > w.Columns || y > w.Rows || x < 0 || y < 0 {
+  if x > w.StartX + w.Columns || y > w.StartY + w.Rows || x <= 0 || y <= 0 {
     return
   }
   w.CurX = x
@@ -130,21 +130,22 @@ func (w *Window) Move(x, y int) {
 }
 
 func (w *Window) MoveX(x int) {
-  if x > w.Columns || x < 0 {
+  if x > w.StartX + w.Columns || x <= 0 {
     return
   }
   w.Move(x, w.CurY)
 }
 
 func (w *Window) MoveY(y int) {
-  if y > w.Rows || y < 0 {
+  if y > w.StartY + w.Rows || y <= 0 {
     return
   }
   w.Move(w.CurX, y)
 }
 
 func (w *Window) CurAdd(x, y int) {
-  if (w.CurX + x > w.Columns || w.CurX + x < 0) || (w.CurY + y > w.Rows || w.CurY + y < 0) {
+  if (w.CurX + x > w.StartX + w.Columns || w.CurX + x <= 0) ||
+    (w.CurY + y > w.StartY + w.Rows || w.CurY + y <= 0) {
     return
   }
   w.CurX += x
@@ -153,7 +154,7 @@ func (w *Window) CurAdd(x, y int) {
 }
 
 func (w *Window) CurAddX(x int) {
-  if w.CurX + x > w.Columns || w.CurX + x < 0 {
+  if w.CurX + x > w.StartX + w.Columns || w.CurX + x <= 0 {
     return
   }
   w.CurAdd(x, 0)
@@ -167,8 +168,8 @@ func (w *Window) CurAddY(y int) {
 }
 
 func (w *Window) OutChar(b byte) {
-  if w.CurX + 1 > w.Columns {
-    w.CurAdd(-w.CurX + 1, 1)
+  if w.CurX + 1 > w.StartX + w.Columns {
+    w.CurAdd(-w.Columns, 1)
   }
   fmt.Printf("%c", b)
   w.CurX++
