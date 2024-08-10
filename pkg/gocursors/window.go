@@ -58,6 +58,8 @@ type Window struct {
 
   Parent      *Window
   Children  []*Window
+
+  HasBorder   bool
 }
 
 /*
@@ -131,6 +133,8 @@ func InitWindow(parent *Window, columns, rows, startX, startY int) *Window {
 
       CurX: 1,
       CurY: 1,
+
+      HasBorder: false,
     }
     parent.Children = append(parent.Children, w)
     w.Home()
@@ -148,6 +152,8 @@ func InitWindow(parent *Window, columns, rows, startX, startY int) *Window {
 
     CurX: 1,
     CurY: 1,
+
+    HasBorder: false,
   }
   root.Home()
   return root
@@ -251,7 +257,9 @@ func (w *Window) OutChar(r rune) {
   if w.CurX == w.StartX + w.Columns && w.CurY == w.StartY + w.Rows {
     return
   }
-  if w.CurX + 1 > w.StartX + w.Columns {
+  if w.HasBorder && (w.CurX + 1 == w.StartX + w.Columns) {
+    w.CurAdd(-w.Columns + 2, 1)
+  } else if w.CurX + 1 > w.StartX + w.Columns {
     w.CurAdd(-w.Columns, 1)
   }
   fmt.Printf("%c", r)
@@ -319,6 +327,7 @@ func (w *Window) CustomBorder(topLeft, topRight, bottomLeft, bottomRight, horizo
       }
     }
   }
+  w.HasBorder = true
   w.Move(w.StartX + 1, w.StartY + 1)
 }
 

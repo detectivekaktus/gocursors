@@ -5,6 +5,8 @@ Any knowledge of ncurses is welcome and can help a lot while exploring the featu
 
 In order to use this library successfully you need a terminal or a terminal emulator which supports ANSI escape codes. To install the library, use `go get github.com/detectivekaktus/gocursors`.
 
+The library depends on the `golang.org/x/term v0.22.0` module.
+
 ## Demonstration
 - Hello world. The program that prints *Hello, World!* and waits for the user input and then exits normally.
 ```go
