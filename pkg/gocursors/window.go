@@ -344,7 +344,7 @@ func CbreakStart() {
 }
 
 /*
-  Restores the terminal state to normal one.
+  Restores the terminal state to the normal one.
 */
 func CbreakRestore() {
   terminal.ApplyState(state)

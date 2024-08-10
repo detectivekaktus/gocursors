@@ -55,5 +55,10 @@ func main() {
 }
 ```
 
+## Projects using GoCursors
+- [GopherGit](https://github.com/detectivekaktus/GopherGit). Git TUI client written in Go with use of GoCursors library. The project is maintained by [detectivekaktus](https://github.com/detectivekaktus).
+
+If you want to add your project to the list, please submit a pull request!
+
 ## Contributing
 In order to contribute to the project, you must follow the [guidelines](https://github.com/detectivekaktus/GoCursors/blob/main/CONTRIBUTING.md). Any deviations won't probably be merged.
