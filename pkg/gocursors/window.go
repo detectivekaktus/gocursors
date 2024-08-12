@@ -113,13 +113,13 @@ func InitWindow(parent *Window, columns, rows, startX, startY int) *Window {
       GoCrash("FATAL ERROR: Can't create a root window when there's already an existing one.\n")
     }
   } else {
-    if startX <= 0 || startY <= 0 {
+    if startX < 0 || startY < 0 {
       GoCrash("ERROR: Start coordinates begin from 1, 1.\n")
     }
     if columns <= 0 || rows <= 0 {
       GoCrash("ERROR: Window size cannot be equal or smaller than 0.\n")
-    } else if columns >= parent.Columns || rows >= parent.Rows {
-      GoCrash("ERROR: Child cannot be bigger or equal to its parent.\n")
+    } else if columns > parent.Columns || rows > parent.Rows {
+      GoCrash("ERROR: Child cannot be bigger than its parent.\n")
     }
     w := &Window{
       Parent: parent,
@@ -329,6 +329,16 @@ func (w *Window) CustomBorder(topLeft, topRight, bottomLeft, bottomRight, horizo
   }
   w.HasBorder = true
   w.Move(w.StartX + 1, w.StartY + 1)
+}
+
+func (w *Window) Erase() {
+  w.Home()
+  w.HasBorder = false
+  for y := 0; y < w.Rows; y++ {
+    for x := 0; x < w.Columns; x++ {
+      w.OutChar(' ')
+    }
+  }
 }
 
 /*
