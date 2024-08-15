@@ -62,7 +62,7 @@ func ResetAll() {
   It also stores all the values that are accessable with
   the terminals that allow using 8bit colors.
 */
-type Color uint8
+type Color uint32 
 
 /*
   Terminal defined foreground colors.
@@ -119,10 +119,10 @@ func Apply8bitColor(clr Color, foreground bool) {
   disable the colors after outputting the characters.
   The color must be passed a hex value.
 */
-func ApplyRGBColor(val uint32, foreground bool) {
+func ApplyRGBColor(clr Color, foreground bool) {
   if foreground {
-    fmt.Printf("\033[38;2;%d;%d;%dm", (val >> 16) & 0xFF, (val >> 8) & 0xFF, val & 0xFF)
+    fmt.Printf("\033[38;2;%d;%d;%dm", (clr >> 16) & 0xFF, (clr >> 8) & 0xFF, clr & 0xFF)
   } else {
-    fmt.Printf("\033[48;2;%d;%d;%dm", (val >> 16) & 0xFF, (val >> 8) & 0xFF, val & 0xFF)
+    fmt.Printf("\033[48;2;%d;%d;%dm", (clr >> 16) & 0xFF, (clr >> 8) & 0xFF, clr & 0xFF)
   }
 }

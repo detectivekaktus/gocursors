@@ -28,7 +28,9 @@ type Window struct {
   Parent      *Window
   Children  []*Window
 
-  HasBorder   bool
+  hasBorder   bool
+  fgColor     Color
+  bgColor     Color
 }
 
 /*
@@ -67,7 +69,7 @@ func InitWindow(parent *Window, columns, rows, startX, startY int) *Window {
       CurX: 1,
       CurY: 1,
 
-      HasBorder: false,
+      hasBorder: false,
     }
     parent.Children = append(parent.Children, w)
     w.Home()
@@ -86,7 +88,7 @@ func InitWindow(parent *Window, columns, rows, startX, startY int) *Window {
     CurX: 1,
     CurY: 1,
 
-    HasBorder: false,
+    hasBorder: false,
   }
   Root.Home()
   return Root
@@ -190,7 +192,21 @@ func (w *Window) OutChar(r rune) {
   if w.CurX == w.StartX + w.Columns && w.CurY == w.StartY + w.Rows {
     return
   }
-  if w.HasBorder && (w.CurX + 1 == w.StartX + w.Columns) {
+  if w.bgColor != 0 {
+    if w.bgColor < 256 {
+      Apply8bitColor(w.bgColor, false)
+    } else {
+      ApplyRGBColor(w.bgColor, false)
+    }
+  }
+  if w.fgColor != 0 {
+    if w.fgColor < 256 {
+      Apply8bitColor(w.fgColor, true)
+    } else {
+      ApplyRGBColor(w.fgColor, true)
+    }
+  }
+  if w.hasBorder && (w.CurX + 1 == w.StartX + w.Columns) {
     w.CurAdd(-w.Columns + 2, 1)
   } else if w.CurX + 1 > w.StartX + w.Columns {
     w.CurAdd(-w.Columns, 1)
@@ -260,16 +276,44 @@ func (w *Window) CustomBorder(topLeft, topRight, bottomLeft, bottomRight, horizo
       }
     }
   }
-  w.HasBorder = true
+  w.hasBorder = true
   w.Move(w.StartX + 1, w.StartY + 1)
 }
 
+/*
+  Clears the content of the Window.
+*/
 func (w *Window) Erase() {
   w.Home()
-  w.HasBorder = false
+  w.hasBorder = false
   for y := 0; y < w.Rows; y++ {
     for x := 0; x < w.Columns; x++ {
       w.OutChar(' ')
     }
   }
+  w.Home()
+}
+
+/*
+  Sets the default background color for the Window and redraws it.
+  Note that all the content previously rendered will disappear.
+
+  For setting the terminal defined values, use 8-bit color values
+  you can get here: https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
+*/
+func (w *Window) SetBackgroundColor(clr Color) {
+  w.bgColor = clr
+  w.Erase()
+}
+
+/*
+  Sets the default foreground color for the Window and redraws it.
+  Note that all the content previously rendered will disappear.
+
+  For setting the terminal defined values, use 8-bit color values
+  you can get here: https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
+*/
+func (w *Window) SetForegroundColor(clr Color) {
+  w.fgColor = clr
+  w.Erase()
 }
