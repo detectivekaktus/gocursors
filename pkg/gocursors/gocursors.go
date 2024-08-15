@@ -109,3 +109,17 @@ func CbreakStart() {
 func CbreakRestore() {
   terminal.ApplyState(state)
 }
+
+/*
+  Makes the cursor visible.
+*/
+func MakeVisible() {
+  fmt.Print("\033[?25h")
+}
+
+/*
+  Makes the cursor invisible.
+*/
+func MakeInvisible() {
+  fmt.Print("\033[?25l")
+}
