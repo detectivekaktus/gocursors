@@ -31,7 +31,7 @@ func GoCrash(msg string, args ...any) {
     terminal.ApplyState(state)
   }
   if Root != nil {
-    Root.Home()
+    Root.Move(1, 1)
   }
   if !visible {
     MakeVisible()
@@ -53,7 +53,7 @@ func GoExit(exitCode int) {
     terminal.ApplyState(state)
   }
   if Root != nil {
-    Root.Home()
+    Root.Move(1, 1)
   }
   if !visible {
     MakeVisible()
@@ -95,7 +95,7 @@ func GoCursors() *Window {
 */
 func EndCursors() {
   EraseEntireScreen()
-  Root.Home()
+  Root.Move(1, 1)
 }
 
 /*

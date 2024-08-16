@@ -112,7 +112,11 @@ func (w *Window) Cursor() {
   Moves the cursor to the start of the window.
 */
 func (w *Window) Home() {
-  w.Move(w.StartX, w.StartY)
+  if !w.hasBorder {
+    w.Move(w.StartX, w.StartY)
+  } else {
+    w.Move(w.StartX + 1, w.StartY + 1)
+  }
 }
 
 /*
