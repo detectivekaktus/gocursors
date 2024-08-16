@@ -17,6 +17,7 @@ import (
 )
 
 var state *term.State
+var visible bool = true
 
 /*
   Resets the terminal state if set to raw mode, moves the
@@ -31,6 +32,9 @@ func GoCrash(msg string, args ...any) {
   }
   if Root != nil {
     Root.Home()
+  }
+  if !visible {
+    MakeVisible()
   }
   EraseEntireScreen()
   fmt.Printf(msg, args...)
@@ -50,6 +54,9 @@ func GoExit(exitCode int) {
   }
   if Root != nil {
     Root.Home()
+  }
+  if !visible {
+    MakeVisible()
   }
   EraseEntireScreen()
   os.Exit(exitCode)
