@@ -224,7 +224,7 @@ func (w *Window) OutChar(r rune) {
 func (w *Window) OutString(s string) {
   for i := 0; i < len(s); i++ {
     if s[i] == '\n' {
-      w.CurAdd(-w.CurX + 1, 1)
+      w.CurAdd(w.StartX - w.CurX + 1, 1)
     } else {
       w.OutChar(rune(s[i]))
     }
