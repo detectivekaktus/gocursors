@@ -29,8 +29,6 @@ type Window struct {
   Children  []*Window
 
   hasBorder   bool
-  fgColor     Color
-  bgColor     Color
 }
 
 /*
@@ -196,20 +194,6 @@ func (w *Window) OutChar(r rune) {
   if w.CurX == w.StartX + w.Columns && w.CurY == w.StartY + w.Rows {
     return
   }
-  if w.bgColor != 0 {
-    if w.bgColor < 256 {
-      Apply8bitColor(w.bgColor, false)
-    } else {
-      ApplyRGBColor(w.bgColor, false)
-    }
-  }
-  if w.fgColor != 0 {
-    if w.fgColor < 256 {
-      Apply8bitColor(w.fgColor, true)
-    } else {
-      ApplyRGBColor(w.fgColor, true)
-    }
-  }
   if w.hasBorder && (w.CurX + 1 == w.StartX + w.Columns) {
     w.CurAdd(-w.Columns + 2, 1)
   } else if w.CurX + 1 > w.StartX + w.Columns {
@@ -296,28 +280,4 @@ func (w *Window) Erase() {
     }
   }
   w.Home()
-}
-
-/*
-  Sets the default background color for the Window and redraws it.
-  Note that all the content previously rendered will disappear.
-
-  For setting the terminal defined values, use 8-bit color values
-  you can get here: https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
-*/
-func (w *Window) SetBackgroundColor(clr Color) {
-  w.bgColor = clr
-  w.Erase()
-}
-
-/*
-  Sets the default foreground color for the Window and redraws it.
-  Note that all the content previously rendered will disappear.
-
-  For setting the terminal defined values, use 8-bit color values
-  you can get here: https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797
-*/
-func (w *Window) SetForegroundColor(clr Color) {
-  w.fgColor = clr
-  w.Erase()
 }
